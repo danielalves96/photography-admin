@@ -60,7 +60,7 @@ export function ImageDropzone() {
     e.preventDefault();
     const title = descriptionRef.current.value;
     const category = categoryRef.current.value;
-    const base64 = images[0].data_url;
+    const src = images[0].data_url;
     const format = formatRef.current.value;
 
     if (category === "null" || format === "null") {
@@ -74,7 +74,7 @@ export function ImageDropzone() {
       category,
       width,
       height,
-      base64,
+      src,
     };
 
     const { data, error } = await supabase.from("pictures").insert(imageData);

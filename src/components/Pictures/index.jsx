@@ -91,7 +91,7 @@ export function Pictures() {
                   {pics.map((pic) => (
                     <tr key={pic.id}>
                       <td style={{ width: 200 }}>
-                        <img src={pic.base64} alt="" width={150} />
+                        <img src={pic.src} alt="" width={150} />
                       </td>
                       <td>
                         <span>{pic.title}</span>
@@ -133,7 +133,7 @@ export function Pictures() {
             {isEditing && (
               <FormEditPicture
                 id={editingPhotoData.id}
-                base64={editingPhotoData.base64}
+                src={editingPhotoData.src}
                 setIsEditing={setIsEditing}
                 title={editingPhotoData.title}
                 category={editingPhotoData.category}

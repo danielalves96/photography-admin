@@ -74,7 +74,7 @@ export function FormEditPicture(props) {
       <>
         <h1>Editar foto</h1>
         <div className="image-container">
-          <img src={props.base64} alt="" className="image-limit" />
+          <img src={props.src} alt="" className="image-limit" />
         </div>
         <div className="container mt-4" style={{ maxWidth: "500px" }}>
           <form className="form" onSubmit={handleSubmit}>
