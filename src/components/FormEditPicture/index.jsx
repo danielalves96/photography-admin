@@ -1,5 +1,4 @@
-import React, { useRef, useEffect } from "react";
-import ImageUploading from "react-images-uploading";
+import React, { useRef } from "react";
 import Swal from "sweetalert2";
 import { supabase } from "../../supabase";
 import "./styles.css";

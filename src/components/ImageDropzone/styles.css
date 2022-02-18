@@ -1,18 +1,7 @@
-.image-limit{
-  max-height: 600px !important;
-}
-
-.image-container{
+.align-image {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 25px;
-}
-
-.image-item__btn-wrapper {
-  display: flex;
-  gap: 1rem;
   justify-content: center;
+  margin-bottom: 2rem;
 }
 
 select {
@@ -22,3 +11,6 @@ select {
 .select {
   width: 100%;
 }
+
+
+

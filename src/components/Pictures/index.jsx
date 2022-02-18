@@ -80,9 +80,6 @@ export function Pictures() {
                       <span title="category">Categoria</span>
                     </th>
                     <th>
-                      <span title="format">Formato</span>
-                    </th>
-                    <th>
                       <span title="controls">Ações</span>
                     </th>
                   </tr>
@@ -98,11 +95,6 @@ export function Pictures() {
                       </td>
                       <td>
                         <span>{pic.category}</span>
-                      </td>
-                      <td>
-                        <span>{pic.width === "4" ? `Paisagem` : ""}</span>
-                        <span>{pic.width === "3" ? `Retrato` : ""}</span>
-                        <span>{pic.width === "1" ? `Quadrada` : ""}</span>
                       </td>
                       <td>
                         <div style={{ display: "flex", gap: "20px" }}>
@@ -137,7 +129,6 @@ export function Pictures() {
                 setIsEditing={setIsEditing}
                 title={editingPhotoData.lightboxCaption}
                 category={editingPhotoData.category}
-                format={editingPhotoData.format}
                 reloadPage={reloadPage}
                 pageReloader={pageReloader}
               />
