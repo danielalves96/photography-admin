@@ -1,26 +1,19 @@
-import React, { useRef } from "react";
-import ImageUploading from "react-images-uploading";
+import React, { useEffect, useRef } from "react";
 import Swal from "sweetalert2";
 import { supabase } from "../../supabase";
 import "./styles.css";
 import { Loader } from "../FullScreenLoader";
+import { v4 as uuidv4 } from 'uuid';
 
 export function ImageDropzone() {
-  const [images, setImages] = React.useState([]);
   const [width, setWidth] = React.useState("");
   const [height, setHeight] = React.useState("");
   const [loader, setLoader] = React.useState(false);
-  const maxNumber = 69;
+  const [foto, setFoto] = React.useState([]);
 
   const descriptionRef = useRef();
   const categoryRef = useRef();
   const formatRef = useRef();
-
-  const onChange = (imageList, addUpdateIndex) => {
-    // data for submit
-    // console.log(imageList, addUpdateIndex);
-    setImages(imageList);
-  };
 
   const onSelectFormat = (e) => {
     e.preventDefault();
@@ -55,12 +48,16 @@ export function ImageDropzone() {
     });
   };
 
+  const handleFileSelected = (e) => {
+    const files = Array.from(e.target.files);
+    setFoto(files[0]);
+  };
+
   async function handleSubmit(e) {
     setLoader(true);
     e.preventDefault();
     const lightboxCaption = descriptionRef.current.value;
     const category = categoryRef.current.value;
-    const src = images[0].data_url;
     const format = formatRef.current.value;
 
     if (category === "null" || format === "null") {
@@ -69,160 +66,127 @@ export function ImageDropzone() {
       return;
     }
 
-    const imageData = {
-      lightboxCaption,
-      category,
-      width,
-      height,
-      src,
-    };
+    const imageBucketName = uuidv4();
 
-    const { data, error } = await supabase.from("pictures").insert(imageData);
+    const { data, error } = await supabase.storage
+      .from("pictures")
+      .upload(`${imageBucketName}.jpg`, foto);
 
     if (data) {
-      setLoader(false);
-      Swal.fire({
-        title: "Feito!",
-        text: "Upload realizado com sucesso!",
-        icon: "success",
-        confirmButtonText: "Ok",
-        confirmButtonColor: "#3e8ed0",
-      });
+      const { signedURL, error } = await supabase.storage
+        .from("pictures")
+        .createSignedUrl(`${imageBucketName}.jpg`, 60);
+
+      if (signedURL) {
+        const imageData = {
+          lightboxCaption,
+          category,
+          width,
+          height,
+          src: signedURL,
+        };
+
+        const { data, error } = await supabase
+          .from("pictures")
+          .insert(imageData);
+        if (data) {
+          setLoader(false);
+          Swal.fire({
+            title: "Feito!",
+            text: "Upload realizado com sucesso!",
+            icon: "success",
+            confirmButtonText: "Ok",
+            confirmButtonColor: "#3e8ed0",
+          });
+        }
+
+        if (error) {
+          setLoader(false);
+          Swal.fire({
+            title: "Opss!",
+            text: "Algo deu errado, tente novamente.",
+            icon: "error",
+            confirmButtonText: "Ok",
+            confirmButtonColor: "#3e8ed0",
+          });
+        }
+      }
     }
-
-    if (error) {
-      setLoader(false);
-      Swal.fire({
-        title: "Opss!",
-        text: "Algo deu errado, tente novamente.",
-        icon: "error",
-        confirmButtonText: "Ok",
-        confirmButtonColor: "#3e8ed0",
-      });
-    }
-
-    console.log(data);
-
-    setImages([]);
   }
 
   return (
     <div className="App">
-      <ImageUploading
-        multiple
-        value={images}
-        onChange={onChange}
-        maxNumber={maxNumber}
-        dataURLKey="data_url"
-      >
-        {({
-          imageList,
-          onImageUpload,
-          onImageRemoveAll,
-          onImageUpdate,
-          onImageRemove,
-          isDragging,
-          dragProps,
-        }) => (
-          <div className="upload__image-wrapper">
-            <Loader state={loader} />
-            {imageList.length < 1 && (
-              <button
-                className="button"
-                style={isDragging ? { color: "red" } : undefined}
-                onClick={onImageUpload}
-                {...dragProps}
-              >
-                Clique aqui para adicionar uma nova foto
-              </button>
-            )}
-            &nbsp;
-            {imageList.map((image, index) => (
-              <>
-                <div key={index} className="image-container">
-                  <img src={image["data_url"]} alt="" className="image-limit" />
-                  <div className="image-item__btn-wrapper">
-                    <button
-                      className="button is-small"
-                      onClick={() => onImageUpdate(index)}
-                    >
-                      Alterar
-                    </button>
-                    <button
-                      className="button is-small"
-                      onClick={() => onImageRemove(index)}
-                    >
-                      Remover
-                    </button>
-                  </div>
+      {/* <img src={picPreview} alt="" width="400" /> */}
+
+      <>
+        <div className="container mt-4" style={{ maxWidth: "500px" }}>
+          <input
+            className="input mb-5"
+            type="file"
+            id="avatar"
+            name="avatar"
+            accept="image/png, image/jpeg"
+            onChange={handleFileSelected}
+          />
+          <form className="form" onSubmit={handleSubmit}>
+            <div class="field">
+              <label for="" class="label">
+                Descrição
+              </label>
+              <div class="control ">
+                <input
+                  type="text"
+                  placeholder="Digite uma descrição curta"
+                  class="input"
+                  required
+                  ref={descriptionRef}
+                />
+              </div>
+            </div>
+            <div class="field">
+              <label for="" class="label">
+                Categoria
+              </label>
+              <div class="control ">
+                <div class="select">
+                  <select required ref={categoryRef}>
+                    <option value="null">Selecione</option>
+                    <option>Fine art</option>
+                    <option>Estúdio</option>
+                    <option>Ensaios externos</option>
+                    <option>Casamentos</option>
+                    <option>Pré casamento</option>
+                    <option>Teatro</option>
+                    <option>15 Anos</option>
+                    <option>Gastronomia</option>
+                    <option>Infantil</option>
+                    <option>Comercial</option>
+                  </select>
                 </div>
-                <div className="container mt-4" style={{ maxWidth: "500px" }}>
-                  <form className="form" onSubmit={handleSubmit}>
-                    <div class="field">
-                      <label for="" class="label">
-                        Descrição
-                      </label>
-                      <div class="control ">
-                        <input
-                          type="text"
-                          placeholder="Digite uma descrição curta"
-                          class="input"
-                          required
-                          ref={descriptionRef}
-                        />
-                      </div>
-                    </div>
-                    <div class="field">
-                      <label for="" class="label">
-                        Categoria
-                      </label>
-                      <div class="control ">
-                        <div class="select">
-                          <select required ref={categoryRef}>
-                            <option value="null">Selecione</option>
-                            <option >Fine art</option>
-                            <option >Estúdio</option>
-                            <option >Ensaios externos</option>
-                            <option >Casamentos</option>
-                            <option >Pré casamento</option>
-                            <option >Teatro</option>
-                            <option >15 Anos</option>
-                            <option >Gastronomia</option>
-                            <option >Infantil</option>
-                            <option >Comercial</option>
-                          </select>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="field">
-                      <label for="" class="label">
-                        Formato
-                      </label>
-                      <div class="control ">
-                        <div class="select">
-                          <select
-                            required
-                            ref={formatRef}
-                            onChange={onSelectFormat}
-                          >
-                            <option value="null">Selecione</option>
-                            <option value="landscape">Paisagem</option>
-                            <option value="portrait">Retrato</option>
-                            <option valuer="square">Quadrado</option>
-                          </select>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="field mt-5 mb-5">
-                      <button class="button is-info">Publicar foto</button>
-                    </div>
-                  </form>
+              </div>
+            </div>
+            <div class="field">
+              <label for="" class="label">
+                Formato
+              </label>
+              <div class="control ">
+                <div class="select">
+                  <select required ref={formatRef} onChange={onSelectFormat}>
+                    <option value="null">Selecione</option>
+                    <option value="landscape">Paisagem</option>
+                    <option value="portrait">Retrato</option>
+                    <option valuer="square">Quadrado</option>
+                  </select>
                 </div>
-              </>
-            ))}
-          </div>
-        )}
-      </ImageUploading>
+              </div>
+            </div>
+            <div class="field mt-5 mb-5">
+              <button class="button is-info">Publicar foto</button>
+            </div>
+          </form>
+        </div>
+      </>
+      <Loader state={loader} />
     </div>
   );
 }

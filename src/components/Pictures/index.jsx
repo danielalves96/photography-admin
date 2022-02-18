@@ -5,6 +5,7 @@ import { supabase } from "../../supabase";
 import { FormEditPicture } from "../FormEditPicture";
 import { Loader } from "../FullScreenLoader";
 
+
 export function Pictures() {
   const [pics, setPics] = useState([]);
   const [loader, setLoader] = useState(true);
@@ -26,7 +27,6 @@ export function Pictures() {
     if (data) {
       setPics(data);
       setLoader(false);
-      console.log(data);
     }
   }
 

@@ -65,8 +65,6 @@ export function FormEditPicture(props) {
         confirmButtonColor: "#3e8ed0",
       });
     }
-
-    console.log(data);
   }
 
   return (
