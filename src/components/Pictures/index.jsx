@@ -94,7 +94,7 @@ export function Pictures() {
                         <img src={pic.src} alt="" width={150} />
                       </td>
                       <td>
-                        <span>{pic.title}</span>
+                        <span>{pic.lightboxCaption}</span>
                       </td>
                       <td>
                         <span>{pic.category}</span>
@@ -135,7 +135,7 @@ export function Pictures() {
                 id={editingPhotoData.id}
                 src={editingPhotoData.src}
                 setIsEditing={setIsEditing}
-                title={editingPhotoData.title}
+                title={editingPhotoData.lightboxCaption}
                 category={editingPhotoData.category}
                 format={editingPhotoData.format}
                 reloadPage={reloadPage}

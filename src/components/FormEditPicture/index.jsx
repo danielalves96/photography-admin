@@ -24,7 +24,7 @@ export function FormEditPicture(props) {
   async function handleSubmit(e) {
     setLoader(true);
     e.preventDefault();
-    const title = descriptionRef.current.value;
+    const lightboxCaption = descriptionRef.current.value;
     const category = categoryRef.current.value;
 
     if (category === "null") {
@@ -35,7 +35,7 @@ export function FormEditPicture(props) {
 
     const imageData = {
       id: props.id,
-      title,
+      lightboxCaption,
       category,
     };
 
@@ -88,7 +88,7 @@ export function FormEditPicture(props) {
                   placeholder="Digite uma descrição curta"
                   class="input"
                   required
-                  defaultValue={props.title}
+                  defaultValue={props.lightboxCaption}
                   ref={descriptionRef}
                 />
               </div>

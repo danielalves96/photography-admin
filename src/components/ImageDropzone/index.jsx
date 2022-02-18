@@ -58,7 +58,7 @@ export function ImageDropzone() {
   async function handleSubmit(e) {
     setLoader(true);
     e.preventDefault();
-    const title = descriptionRef.current.value;
+    const lightboxCaption = descriptionRef.current.value;
     const category = categoryRef.current.value;
     const src = images[0].data_url;
     const format = formatRef.current.value;
@@ -70,7 +70,7 @@ export function ImageDropzone() {
     }
 
     const imageData = {
-      title,
+      lightboxCaption,
       category,
       width,
       height,
