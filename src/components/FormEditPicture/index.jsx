@@ -112,6 +112,7 @@ export function FormEditPicture(props) {
                     <option>Gastronomia</option>
                     <option>Infantil</option>
                     <option>Comercial</option>
+                    <option>Gestante</option>
                   </select>
                 </div>
               </div>
